@@ -38,10 +38,10 @@ menuLoop:
 
   # Ottieni input da tastiera
 readInput:
-	movl $3, %eax         # syscall read
-	movl $0, %ebx         # id tastiera
-	leal input, %ecx        # destinazione
-	movl $50, %edx         # lunghezza stringa
+	movl $3, %eax     # syscall read
+	movl $0, %ebx     # id tastiera
+	leal input, %ecx  # destinazione
+	movl $50, %edx    # lunghezza stringa
 	int $0x80             
 
   xorl %ebx, %ebx
@@ -68,7 +68,7 @@ countChar:
   je HPF
 
   cmpb $51, %dl # Controlla il primo carattere della stringa in input con '3'
-  je quit
+  je menuEnd
 
 errorInput:
   leal inputError, %ecx
@@ -79,11 +79,13 @@ EDF:
   pushl fd # Salva il file descriptor nello stack
   call edf
   popl fd # Rimuovi il file descriptor dallo stack
+  jmp menuLoop
 
 HPF:
   pushl fd # Salva il file descriptor nello stack
   call hpf
   popl fd # Rimuovi il file descriptor dallo stack
+  jmp menuLoop
 
-quit:
+menuEnd:
   ret

@@ -19,9 +19,9 @@ _start:
   jz errorParam
 
   # Apri il file del parametro1
-  movl $5, %eax # Syscall open
+  movl $5, %eax   # Syscall open
   movl %esi, %ebx # Nome del file
-  movl $0, %ecx # Modalità lettura
+  movl $0, %ecx   # Modalità lettura
   int $0x80
 
   # Se il file descriptor è null allora errore

@@ -4,7 +4,7 @@
 
 # Stampa la stringa in %ecx
 printStr:
-  # Resetta %ecx per contare quanti caratteri stampare
+  # Resetta %edx per contare quanti caratteri stampare
   xorl %edx, %edx
 
 countChars:
