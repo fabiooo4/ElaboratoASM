@@ -1,4 +1,5 @@
 .section .data
+  fd: .int 0 # File descriptor
   paramError: .ascii "Nessun parametro fornito\n\0"
   fileError: .ascii "Errore nell'apertura del file\n\0"
 
@@ -27,6 +28,8 @@ _start:
   cmp $0, %eax
   jl errorFile
 
+  movl %eax, fd
+
   # Il file descriptor si trova in %eax
   # Apre il loop del menu (presupponendo il file descriptor in %eax)
   call menu
@@ -43,6 +46,11 @@ errorFile:
   jmp end
 
 end:
+  # Chiudi il file aperto dal parametro1
+  mov $6, %eax # syscall close
+  mov fd, %ecx # File descriptor
+  int $0x80
+
   # Termina
   movl $1, %eax
   movl $0, %ebx
