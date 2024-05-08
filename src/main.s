@@ -1,3 +1,7 @@
+.section .data
+  paramError: .ascii "Nessun parametro fornito\n\0"
+  fileError: .ascii "Errore nell'apertura del file\n\0"
+
 .section .text
 
   .global _start
@@ -11,7 +15,7 @@ _start:
 
   # Se il parametro non è vuoto apri il file
   testl %esi, %esi
-  jz paramError
+  jz errorParam
 
   # Apri il file del parametro1
   movl $5, %eax # Syscall open
@@ -20,17 +24,23 @@ _start:
   int $0x80
 
   # Se il file descriptor è null allora errore
-  testl %eax, %eax
-  jz fileError
+  cmp $0, %eax
+  jl errorFile
 
   # Il file descriptor si trova in %eax
   # Apre il loop del menu (presupponendo il file descriptor in %eax)
   call menu
   jmp end
 
-paramError:
+errorParam:
+  leal paramError, %ecx
+  call printStr
+  jmp end
 
-fileError:
+errorFile:
+  leal fileError, %ecx
+  call printStr
+  jmp end
 
 end:
   # Termina

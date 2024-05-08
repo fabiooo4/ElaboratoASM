@@ -45,14 +45,14 @@ readInput:
 	int $0x80             
 
   xorl %ebx, %ebx
-countChars:
+countChar:
   # Conta quanti caratteri ha la stringa in input
   movb (%ecx, %ebx), %dl
 
   incl %ebx
 
   cmpb $10, %dl
-  jne countChars
+  jne countChar
 
   # Se il numero di caratteri != 2, stampa errore (2 perchè conta anche \n)
   cmp $2, %ebx
