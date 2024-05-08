@@ -42,15 +42,8 @@ readLine:
   # Se c'è una nuova linea incrementa il contatore
   movb buffer, %al
   cmpb newline, %al
-  jne printLine
+  jne pushInt 
   incw lines
-
-printLine:
-  # # Stampa il contenuto della riga
-  # mov $4, %eax        # syscall write
-  # mov $1, %ebx        # File descriptor standard output (stdout)
-  # mov $buffer, %ecx   # Buffer di output
-  # int $0x80           # Interruzione del kernel
 
 # Se il carattere è un intero convertilo
 pushInt:
