@@ -1,11 +1,10 @@
 .section .data
-  filename: .ascii "test.txt"  # Nome del file di testo da leggere
-  fd: .int 0                   # File descriptor
-  buffer: .string ""           # Spazio per il buffer di input
-  newline: .byte 10            # Valore del simbolo di nuova linea
-  lines: .int 0                # Numero di linee
-
-  concatenate: .string ""
+  fd: .int 0          # File descriptor
+  buffer: .string ""  # Spazio per il buffer di input
+  newline: .byte 10   # Valore del simbolo di nuova linea
+  values: .int 0      # Numero di valori inseriti nello stack
+  lines: .long 0      # Numero di valori inseriti nello stack
+  concatenate: .string ""  # Stringa per concatenare le cifre lette da file
 
 .section .bss
 
@@ -21,8 +20,8 @@ edf:
 
   # Vai 2 posti indietro nello stack (1 call + 1 push)
   addl $8, %ebp
-  movl (%ebp), %ebx # Ottiene il file descriptor passato dal menu
-  movl %ebx, fd     # e lo sposta in fd
+  movl (%ebp), %ebx  # Ottiene il file descriptor passato dal menu
+  movl %ebx, fd      # e lo sposta in fd
 
   popl %ebp # Ripristina %ebp
 
@@ -61,6 +60,9 @@ push:
   # Se il carattere è una virgola resetta il contatore
   xorl %edi, %edi
 
+  # Incrementa il contatore dei valori inseriti nello stack
+  incw values
+
   # Converti la stringa in intero
   leal concatenate, %esi
   call atoi
@@ -69,6 +71,7 @@ push:
   # Inserisci nello stack
   pushl %eax
 
+  # Resetta la stringa concatenate 
   movl $0, concatenate
 
   jmp readLine # Torna alla lettura del file
