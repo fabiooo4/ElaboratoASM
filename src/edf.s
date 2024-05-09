@@ -12,7 +12,6 @@
     .globl edf
     .type edf, @function
 
-# Apre il file
 edf:
   # Salva ebp nello stack per liberare %esp
   pushl %ebp 
@@ -33,10 +32,14 @@ readLine:
   mov $buffer, %ecx  # Buffer di input
   mov $1, %edx       # Lunghezza massima
   int $0x80           
+  # TODO fixa errore nella lettura del file al secondo ciclo di menu
 
-  # Se ci sono errori o EOF esco dalla funzione
+  # Se ci sono errori esco dalla funzione
   cmp $0, %eax
-  jle endEdf
+  jl endEdf
+
+  # Altrimenti se c'è EOF eseguo l'algoritmo
+  je edfAlgorithm
   
   # Se c'è una nuova linea incrementa il contatore
   movb buffer, %al
@@ -84,5 +87,28 @@ append:
 
   jmp readLine # Torna alla lettura del file
 
+
+edfAlgorithm:
+  # Salva %ebp nello stack per liberare %esp
+  pushl %ebp
+  movl %esp, %ebp
+
+  movl values, %ecx
+  xorl %edx, %edx
+  xorl %ebx, %ebx
+# Stampa tutti i valori nello stack
+loopValues:
+  movb (%ebp, %ecx, 4), %bl
+  loop loopValues
+
+  # Ripristina %ebp
+  popl %ebp
+
 endEdf:
+  movl values, %ecx
+# Togli dallo stack tutti i valori
+popInt:
+  popl %eax
+  loop popInt
+
   ret

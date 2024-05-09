@@ -2,34 +2,34 @@
   .global atoi
   .type atoi, @function
 
-# Convert an ascii string in %esi to int
+# Converti una stringa ascii situata in %esi in un intero
 atoi:
   xorl %eax, %eax
   xorl %ebx, %ebx
   xorl %ecx, %ecx
 
 atoiLoop:
-  # Move the character %esi + %ecx to %bl
+  # Sposta il carattere %esi + %ecx in %bl
   movb (%esi, %ecx), %bl
 
-  # If the character is 0 return
+  # Se il carattere è 0 return
   testb %bl, %bl
   jz atoiEnd
 
-  # Subtract '0' from %bl (convert to int)
+  # Sottrai '0' da %bl (converti in intero)
   subb $48, %bl
 
-  # Multiply %eax by 10
+  # Moltiplica %eax per 10
   movb $10, %dl
   mulb %dl
 
-  # Add converted char to %eax
+  # Somma il carattere convertito a %eax
   addl %ebx, %eax
 
-  # Increment offset and loop to next char
+  # Incrementa l'offset e itera al carattere successivo
   inc %ecx
   jmp atoiLoop
 
 atoiEnd:
-  # Result is in %eax
+  # Il risultato è in %eax
   ret

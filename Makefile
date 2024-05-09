@@ -4,8 +4,8 @@ LD_FLAGS = -m elf_i386
 
 all: bin/pianificatore
 
-bin/pianificatore: obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o
-	ld $(LD_FLAGS) obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o -o bin/pianificatore
+bin/pianificatore: obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o
+	ld $(LD_FLAGS) obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o -o bin/pianificatore
 
 obj/main.o: src/main.s 
 	as $(AS_FLAGS) $(DEBUG) src/main.s -o obj/main.o
@@ -24,6 +24,9 @@ obj/printStr.o: src/printStr.s
 
 obj/atoi.o: src/atoi.s 
 	as $(AS_FLAGS) $(DEBUG) src/atoi.s -o obj/atoi.o
+
+obj/printInt.o: src/printInt.s 
+	as $(AS_FLAGS) $(DEBUG) src/printInt.s -o obj/printInt.o
 
 clean:
 	rm -f obj/*.o bin/pianificatore

@@ -36,7 +36,7 @@ readLine:
 
   # Se ci sono errori o EOF esco dalla funzione
   cmp $0, %eax
-  jle endEdf
+  jle endHpf
   
   # Se c'è una nuova linea incrementa il contatore
   movb buffer, %al
@@ -84,5 +84,5 @@ append:
 
   jmp readLine # Torna alla lettura del file
 
-endEdf:
+endHpf:
   ret
