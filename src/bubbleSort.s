@@ -42,69 +42,64 @@ bubbleLoop:
   subl $4, %edx
   movl (%ebp, %edx, 4), %ebx  # Parametro 2
 
-  # Se viene usato edf (%ecx = 3) ordina crescente
+  # Se viene usato hpf (%ecx != 3) ordina decrescente
   cmp $3, %ecx
-  jne ascending
+  jne descending
 
+  # Se viene usato edf (%ecx = 3) ordina crescente
   cmp %ebx, %eax
   jg swap
+
+  descending:
+  cmp %ebx, %eax
+  jl swap
 
   # Se a == b usa parametri fallback
   je fallback
 
   jmp bubbleLoop
 
-ascending:
-  # Se viene usato hpf (%ecx != 3) ordina decrescente
-  cmp %ebx, %eax
-  jl swap
-  jmp bubbleLoop
-
 fallback:
-  # Controlla parametri fallback
+  # Salva i registri
   pushl %esi
   pushl %ecx
   pushl %edx
 
+  # Sposta %edx una riga indietro per leggere il primo parametro
   addl $4, %edx
 
-  cmp %esi, %ecx
-  jge offset
-
-  subl %ecx, %esi
-  movl %esi, %ecx
-  jmp fallbackParams
-
-offset:
+  # Sposta %edx alla colonna di parametri scelta dal fallback
   subl %esi, %ecx
+  addl %ecx, %edx
 
-fallbackParams:
-  subl %ecx, %edx
+  # Leggi i parametri
   movl (%ebp, %edx, 4), %eax  # Parametro 1
   subl $4, %edx
   movl (%ebp, %edx, 4), %ebx  # Parametro 2
 
+  # Carica i registri
   popl %esi
   popl %ecx
   popl %edx
 
-  # Se viene usato edf (%ecx = 3) ordina decrescente
+  # Se viene usato edf (%ecx = 3) ordina crescente
   cmp $3, %ecx
   jne fallbackDescending
 
   cmp %ebx, %eax
   jl swap
-  jmp bubbleLoop
 
-fallbackDescending:
+  fallbackDescending:
   # Se viene usato hpf (%ecx != 3) ordina decrescente
   cmp %ebx, %eax
   jg swap
+
   jmp bubbleLoop
+
 
 # Scambia il parametro1(%eax) con parametro2(%ebx)
 swap:
-  # Salva i valori
+  # Salva i registri
   pushl %ecx
   pushl %esi
   pushl %edx
