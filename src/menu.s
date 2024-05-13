@@ -77,14 +77,20 @@ errorInput:
   
 EDF:
   pushl fd # Salva il file descriptor nello stack
-  call edf
-  popl fd # Rimuovi il file descriptor dallo stack
+  pushl %edx # Salva il carattere di input nello stack
+  call plan
+  popl %edx
+  popl fd 
+
   jmp menuLoop
 
 HPF:
   pushl fd # Salva il file descriptor nello stack
-  call hpf
-  popl fd # Rimuovi il file descriptor dallo stack
+  pushl %edx # Salva il carattere di input nello stack
+  call plan
+  popl %edx
+  popl fd 
+
   jmp menuLoop
 
 menuEnd:
