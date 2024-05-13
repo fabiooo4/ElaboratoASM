@@ -62,10 +62,10 @@ countChar:
   movb (%ecx), %dl
 
   cmpb $49, %dl # Controlla il primo carattere della stringa in input con '1'
-  je EDF
+  je exec
 
   cmpb $50, %dl # Controlla il primo carattere della stringa in input con '2'
-  je HPF
+  je exec
 
   cmpb $51, %dl # Controlla il primo carattere della stringa in input con '3'
   je menuEnd
@@ -75,18 +75,18 @@ errorInput:
   call printStr
   jmp readInput
   
-EDF:
+exec:
   pushl fd # Salva il file descriptor nello stack
   pushl %edx # Salva il carattere di input nello stack
-  call plan
-  popl %edx
-  popl fd 
 
-  jmp menuLoop
+  # Stampa '\n'
+  movl $10, input
+  movl $4, %eax
+  movl $1, %ebx
+  leal input, %ecx
+  movl $1, %edx
+  int $0x80
 
-HPF:
-  pushl fd # Salva il file descriptor nello stack
-  pushl %edx # Salva il carattere di input nello stack
   call plan
   popl %edx
   popl fd 

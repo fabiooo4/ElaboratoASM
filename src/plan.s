@@ -148,6 +148,12 @@ sort:
 
   # Stack ordinato
 
+  # Funzione che stampa la pianifica degli ordini
+  movl algorithm, %eax
+  movl values, %ebx
+  movl lines, %ecx
+  call output
+
 
 # Togli dallo stack tutti i valori
   movl values, %ecx

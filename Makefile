@@ -4,8 +4,8 @@ LD_FLAGS = -m elf_i386
 
 all: bin/pianificatore
 
-bin/pianificatore: obj/main.o obj/menu.o obj/plan.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o obj/swapOrders.o
-	ld $(LD_FLAGS) obj/main.o obj/menu.o obj/plan.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o obj/swapOrders.o -o bin/pianificatore
+bin/pianificatore: obj/main.o obj/menu.o obj/plan.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o obj/swapOrders.o obj/output.o
+	ld $(LD_FLAGS) obj/main.o obj/menu.o obj/plan.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o obj/swapOrders.o obj/output.o -o bin/pianificatore
 
 obj/main.o: src/main.s 
 	as $(AS_FLAGS) $(DEBUG) src/main.s -o obj/main.o
@@ -15,9 +15,6 @@ obj/menu.o: src/menu.s
 
 obj/plan.o: src/plan.s 
 	as $(AS_FLAGS) $(DEBUG) src/plan.s -o obj/plan.o
-
-obj/hpf.o: src/hpf.s 
-	as $(AS_FLAGS) $(DEBUG) src/hpf.s -o obj/hpf.o
 
 obj/printStr.o: src/printStr.s 
 	as $(AS_FLAGS) $(DEBUG) src/printStr.s -o obj/printStr.o
@@ -33,6 +30,9 @@ obj/bubbleSort.o: src/bubbleSort.s
 
 obj/swapOrders.o: src/swapOrders.s 
 	as $(AS_FLAGS) $(DEBUG) src/swapOrders.s -o obj/swapOrders.o
+
+obj/output.o: src/output.s 
+	as $(AS_FLAGS) $(DEBUG) src/output.s -o obj/output.o
 
 clean:
 	rm -f obj/*.o bin/pianificatore
