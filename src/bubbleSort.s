@@ -48,22 +48,37 @@ bubbleLoop:
 
   # Se viene usato edf (%ecx = 3) ordina crescente
   cmp %ebx, %eax
-  jg swap
+  jg lineIdx
 
   descending:
   cmp %ebx, %eax
-  jl swap
+  jl lineIdx
 
   # Se a == b usa parametri fallback
   je fallback
 
   jmp bubbleLoop
+  
+lineIdx:
+  # Torna all'inizio della seconda riga
+  pushl %ecx
+
+  subl $1, %ecx
+  addl %ecx, %edx
+
+  popl %ecx
+
+  movl %edx, %ebx
+
+  # Vai alla riga sopra
+  addl $4, %edx
+  movl %edx, %eax
+  jmp swap
 
 fallback:
   # Salva i registri
   pushl %esi
   pushl %ecx
-  pushl %edx
 
   # Sposta %edx una riga indietro per leggere il primo parametro
   addl $4, %edx
@@ -78,24 +93,37 @@ fallback:
   movl (%ebp, %edx, 4), %ebx  # Parametro 2
 
   # Carica i registri
-  popl %esi
   popl %ecx
-  popl %edx
+  popl %esi
 
   # Se viene usato edf (%ecx = 3) ordina crescente
   cmp $3, %ecx
   jne fallbackDescending
 
   cmp %ebx, %eax
-  jl swap
+  jl fallbackLineIdx
 
-  fallbackDescending:
+fallbackDescending:
   # Se viene usato hpf (%ecx != 3) ordina decrescente
   cmp %ebx, %eax
-  jg swap
+  jg fallbackLineIdx
 
   jmp bubbleLoop
 
+fallbackLineIdx:
+  # Torna all'inizio della seconda riga
+  pushl %esi
+
+  subl $1, %esi
+  addl %esi, %edx
+
+  popl %esi
+
+  movl %edx, %ebx
+
+  # Vai alla riga sopra
+  addl $4, %edx
+  movl %edx, %eax
 
 # Scambia il parametro1(%eax) con parametro2(%ebx)
 swap:
@@ -105,14 +133,17 @@ swap:
   pushl %edx
   pushl %edi
 
+  # %eax <- indice della prima riga (offset a ebp)
+  # %ebx <- indice della seconda riga (offset a ebp)
+  # %ebp <- indice del primo elemento nello stack
   movl $1, swapFlag
   # call swapOrders
 
   # Carica i valori
-  popl %ecx
-  popl %esi
-  popl %edx
   popl %edi
+  popl %edx
+  popl %esi
+  popl %ecx
 
   jmp bubbleLoop
 
