@@ -4,8 +4,8 @@ LD_FLAGS = -m elf_i386
 
 all: bin/pianificatore
 
-bin/pianificatore: obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o
-	ld $(LD_FLAGS) obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o -o bin/pianificatore
+bin/pianificatore: obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o obj/swapOrders.o
+	ld $(LD_FLAGS) obj/main.o obj/menu.o obj/edf.o obj/hpf.o obj/printStr.o obj/atoi.o obj/printInt.o obj/bubbleSort.o obj/swapOrders.o -o bin/pianificatore
 
 obj/main.o: src/main.s 
 	as $(AS_FLAGS) $(DEBUG) src/main.s -o obj/main.o
@@ -30,6 +30,9 @@ obj/printInt.o: src/printInt.s
 
 obj/bubbleSort.o: src/bubbleSort.s 
 	as $(AS_FLAGS) $(DEBUG) src/bubbleSort.s -o obj/bubbleSort.o
+
+obj/swapOrders.o: src/swapOrders.s 
+	as $(AS_FLAGS) $(DEBUG) src/swapOrders.s -o obj/swapOrders.o
 
 clean:
 	rm -f obj/*.o bin/pianificatore

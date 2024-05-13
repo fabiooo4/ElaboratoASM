@@ -16,20 +16,21 @@ bubbleSort:
   pushl %ebp 
   movl %esp, %ebp
 
-  # Vai 2 posti indietro nello stack (1 call + 1 push)
-  addl $8, %ebp
-
-# Salva numero valori e numero righe in .data
+  # Salva numero valori e numero righe in .data
   movl %edx, values
   movl %edi, lines
 
-# Sposta %edx alla colonna di parametri scelta dall'offset
-  subl %ecx, %edx
+  # Vai 2 posti indietro nello stack (1 call + 1 push)
+  addl $8, %ebp
 
 # Reset flag
 flag:
   movl $0, swapFlag
   movl lines, %edi
+
+  # Sposta %edx alla colonna di parametri scelta dall'offset
+  movl values, %edx
+  subl %ecx, %edx
 
 bubbleLoop:
   decl %edi
@@ -103,6 +104,8 @@ fallback:
   cmp %ebx, %eax
   jl fallbackLineIdx
 
+  jmp bubbleLoop
+
 fallbackDescending:
   # Se viene usato hpf (%ecx != 3) ordina decrescente
   cmp %ebx, %eax
@@ -137,7 +140,7 @@ swap:
   # %ebx <- indice della seconda riga (offset a ebp)
   # %ebp <- indice del primo elemento nello stack
   movl $1, swapFlag
-  # call swapOrders
+  call swapOrders
 
   # Carica i valori
   popl %edi
