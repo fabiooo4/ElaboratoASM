@@ -8,8 +8,13 @@ il problema.
 Se il prodotto viene completato in ritardo bisogna pagare (priorità) \* (tempo di ritardo) euro.
 
 
-conclusione  10    p (tf - scad) * prio
-9,2,9,2      8     p = (10 - 9) * 2
-11,4,6,4     4     p = (8 - 6) * 4
-8,1,5,4      3     p = (4 - 5) * 4
-10,3,2,2     0     p = (3 - 2) * 2 x
+x,6,10,5   (6 - 10)
+x,5,16,5   (11 - 16)
+x,3,23,5   (14 - 23)
+x,8,31,4   (22 - 31)
+x,2,32,4   (24 - 32)
+x,6,35,3   (30 - 35)
+x,7,44,2   (37 - 44)
+x,1,50,2   (38 - 50)
+x,9,61,2   (47 - 61)
+x,3,65,1   (50 - 65)

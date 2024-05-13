@@ -1,1 +1,0 @@
-Penalità a 0 con HPF e > 0 con EDF
