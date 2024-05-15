@@ -1,5 +1,6 @@
 .section .data
-  fd: .int 0          # File descriptor
+  fd: .int 0          # File descriptor primo parametro
+  fd2: .int 0          # File descriptor secondo parametro
   buffer: .string ""  # Spazio per il buffer di input
   newline: .byte 10   # Valore del simbolo di nuova linea
   values: .int 0      # Numero di valori inseriti nello stack
@@ -26,10 +27,16 @@ plan:
   subl $48, %ebx
   movl %ebx, algorithm # Lo sposta in algorithm
 
-  # Vai 1 indietro per ottenere il secondo parametro
+  # Vai ancora 1 indietro per ottenere il file descriptor secondo parametro
+  addl $4, %ebp
+  movl (%ebp), %ebx  # Ottiene il file descriptor passato dal menu
+  movl %ebx, fd2     # e lo sposta in fd2
+
+  # Vai ancora 1 indietro per ottenere il file descriptor primo parametro
   addl $4, %ebp
   movl (%ebp), %ebx  # Ottiene il file descriptor passato dal menu
   movl %ebx, fd      # e lo sposta in fd
+
 
   popl %ebp # Ripristina %ebp
 
@@ -45,6 +52,12 @@ plan:
   # del file ogni volta che si vuole leggere da esso
   mov $19, %eax  # syscall lseek (riposiziona il read/write offset)
   mov fd, %ebx   # File descriptor
+  mov $0, %ecx   # Valore di offset
+  mov $0, %edx   # Posizione di riferimento (0 = inizio del file)
+  int $0x80
+
+  mov $19, %eax  # syscall lseek (riposiziona il read/write offset)
+  mov fd2, %ebx   # File descriptor
   mov $0, %ecx   # Valore di offset
   mov $0, %edx   # Posizione di riferimento (0 = inizio del file)
   int $0x80
@@ -150,6 +163,7 @@ sort:
   movl algorithm, %eax
   movl values, %ebx
   movl lines, %ecx
+  movl fd2, %edx
   call output
 
 

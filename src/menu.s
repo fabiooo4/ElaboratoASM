@@ -1,5 +1,6 @@
 .section .data
-  fd: .int 0 # File descriptor
+  fd: .int 0 # File descriptor primo parametro
+  fd2: .int 0 # File descriptor secondo parametro
 
   title: .ascii "Che algoritmo vuoi usare per pianificare gli ordini?\n\0"
   entry1: .ascii "  1. Earliest Deadline First (EDF)\n\0"
@@ -17,7 +18,8 @@
 
 # Stampa il menu (presupponendo un file descriptor in %eax)
 menu:
-  movl %eax, fd
+  movl %ebx, fd
+  movl %eax, fd2
 
 menuLoop:
   # Stampa titolo
@@ -75,8 +77,10 @@ errorInput:
   call printStr
   jmp readInput
   
+  
 exec:
   pushl fd # Salva il file descriptor nello stack
+  pushl fd2 # Salva il file descriptor2 nello stack
   pushl %edx # Salva il carattere di input nello stack
 
   # Stampa '\n'
@@ -89,6 +93,7 @@ exec:
 
   call plan
   popl %edx
+  popl fd2
   popl fd 
 
   jmp menuLoop

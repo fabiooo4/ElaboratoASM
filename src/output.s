@@ -1,4 +1,5 @@
 .section .data
+  fd2: .int 0 # File descriptor secondo parametro
   algorithm: .long 0 # Algoritmo
   values: .long 0 # Numero di valori nello stack
   lines: .long 0 # Numero di ordini
@@ -19,7 +20,8 @@
 # Funzione che stampa la pianifica degli ordini
 # %eax: algorithm
 # %ebx: values
-# $ecx: lines
+# %ecx: lines
+# %edx: fd2
 output:
   # Salva ebp nello stack per liberare %esp
   pushl %ebp 
@@ -28,6 +30,7 @@ output:
   movl %eax, algorithm
   movl %ebx, values
   movl %ecx, lines
+  movl %edx, fd2
 
   # Vai 2 posti indietro nello stack (1 call + 1 push)
   addl $8, %ebp
@@ -36,12 +39,21 @@ output:
   leal outputTitle, %ecx
   call printStr
 
+  # Metti fd2 in %ebx
+  movl fd2, %ebx
+  leal outputTitle, %ecx
+  call writeStrFile
+
   # Se edf:
   cmpl $1, algorithm
   jne outHpf
 
   leal edfStr, %ecx
   call printStr
+
+  movl fd2, %ebx
+  leal edfStr, %ecx
+  call writeStrFile
 
   jmp calcOutput
 
@@ -52,6 +64,10 @@ outHpf:
 
   leal hpfStr, %ecx
   call printStr
+
+  movl fd2, %ebx
+  leal hpfStr, %ecx
+  call writeStrFile
 
 calcOutput:
   movl $-1, %edx # Resetta %edx per offset
@@ -93,7 +109,12 @@ printID:
 
   # Stampa l'ID
   movl (%ebp, %edx, 4), %eax
+  pushl %eax
   call printInt
+
+  popl %eax
+  movl fd2, %esi
+  call writeIntFile
 
   # Stampa ':'
   movl $58, char
@@ -103,6 +124,13 @@ printID:
   movl $1, %edx
   int $0x80
 
+  # Scrivi ':' in fd2
+  movl $58, char
+  movl $4, %eax
+  movl fd2, %ebx
+  leal char, %ecx
+  movl $1, %edx
+  int $0x80
 
   # Stampa il tempo di inizio
   popl %ebx
@@ -111,8 +139,14 @@ printID:
 
   movl (%esp, %ebx, 4), %eax
 
+  pushl %eax
   pushl %ebx
   call printInt
+  popl %ebx
+
+  popl %eax
+  pushl %ebx
+  call writeIntFile
   popl %ebx
 
   # Riporto %ebx al valore precedente
@@ -129,6 +163,13 @@ printID:
   movl $1, %edx
   int $0x80
 
+  # Scrivi il carattere '\n' nel file
+  movl $4, %eax
+  movl fd2, %ebx
+  leal char, %ecx
+  movl $1, %edx
+  int $0x80
+
   popl %ebx
   popl %edx
 
@@ -139,11 +180,21 @@ printID:
 printConclusion:
   # Stampa 'Conclusione'
   leal conclusion, %ecx
+  pushl %ecx
   call printStr
+
+  popl %ecx
+  movl fd2, %ebx
+  call writeStrFile
 
   # Stampa il tempo finale
   movl (%esp), %eax
+  pushl %eax
   call printInt
+
+  popl %eax
+  movl fd2, %esi
+  call writeIntFile
 
   # Stampa il carattere '\n'
   movb $10, char
@@ -154,6 +205,12 @@ printConclusion:
   movl $1, %edx
   int $0x80
 
+
+  movl $4, %eax
+  movl fd2, %ebx
+  leal char, %ecx
+  movl $1, %edx
+  int $0x80
 
   # Resetta i registri
   xorl %eax, %eax
@@ -202,11 +259,21 @@ noPenalty:
 
   # Stampa 'Penalty: '
   leal penalty, %ecx
+  pushl %ecx
   call printStr
+
+  popl %ecx
+  movl fd2, %ebx
+  call writeStrFile
 
   # Stampa penalità in %edi
   movl %edi, %eax
+  pushl %eax
   call printInt
+
+  popl %eax
+  movl fd2, %esi
+  call writeIntFile
 
   # Stampa il carattere '\n'
   movl $2, %ecx
@@ -214,11 +281,13 @@ newLine:
   movb $10, char
 
   pushl %ecx
+
   movl $4, %eax
   movl $1, %ebx
   leal char, %ecx
   movl $1, %edx
   int $0x80
+
   popl %ecx
 
   loop newLine
