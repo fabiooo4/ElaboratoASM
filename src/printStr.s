@@ -26,7 +26,6 @@ print:
   # %edx contiene la lunghezza della stringa
   int $0x80
 
-  # Print the new line character
   # Stampa '\n'
   # %eax contiene già la syscall write
   # %ebx contiene già l'id di stdout

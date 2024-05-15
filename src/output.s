@@ -63,6 +63,7 @@ calcOutput:
 
   movl lines, %ebx
   xorl %ecx, %ecx # Resetta %ecx per tenere traccia del tempo
+
 # Metti il tempo di inizio nello stack
 pushTime:
   pushl %ecx

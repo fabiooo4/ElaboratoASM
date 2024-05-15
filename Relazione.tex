@@ -1,8 +1,13 @@
 \documentclass[a4paper]{article}
 \usepackage[italian]{babel}
 \usepackage{float}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{listings}
 \usepackage{tikz}
+\usetikzlibrary{shapes, automata, positioning}
 \usepackage{circuitikz}
+
 \usepackage{hyperref}
 \hypersetup{
     colorlinks=false,
@@ -63,9 +68,153 @@
 \tableofcontents
 \pagebreak
 
-\section{Specifiche}
 \section{Struttura del codice}
+\subsection{Funzioni ausiliarie}
+\subsubsection{printStr.s}
+La funzione presente in questo file serve a stampare una qualsiasi stringa che finisca
+con il carattere '\( \setminus 0\)'  presente nel registro \( \%ecx \).
+
+\subsubsection{printInt.s}
+La funzione presente in questo file serve a convertire un intero presente nel registro
+\( \%eax \)  in una stringa e successivamente stamparla.
+
+\subsubsection{atoi.s}
+La funzione presente in questo file serve a convertire una stringa presente nel registro
+\( \%esi \) in un intero e restituirlo nel registro \( \%eax \).
+
+\subsubsection{bubbleSort.s}
+\label{bubbleSort}
+La funzione presente in questo file serve a riordinare una lista di interi presente nello
+stack in base all'algoritmo scelto dall'utente:
+\begin{itemize}
+	\item Se viene scelto EDF (Earliest Deadline First) la lista di prodotti viene riordinata
+	      in base alla scadenza crescente, oppure nel caso in cui le scadenze siano uguali, i
+	      prodotti vengono riordinati in base alla priorità decrescente.
+
+	\item Se viene scelto HPF (Highest Priority First) la lista di prodotti viene riordinata
+	      in base alla priorità decrescente, oppure nel caso in cui le priorità siano uguali, i
+	      prodotti vengono riordinati in base alla scadenza crescente.
+\end{itemize}
+I parametri da passare alla funzione sono i seguenti:
+\begin{itemize}
+	\item \( \%ecx \) : Offset dal primo elemento di un prodotto per indicare che valori
+	      controllare per l'ordinamento:
+	      \begin{itemize}
+		      \item 1: Identificativo
+		      \item 2: Durata
+		      \item 3: Scadenza
+		      \item 4: Priorità
+	      \end{itemize}
+	\item \( \%esi \): Offset dal primo elemento di un prodotto per indicare che valori
+	      controllare nel caso in cui i valori di \( \%ecx \) siano uguali:
+	      \begin{itemize}
+		      \item 1: Identificativo
+		      \item 2: Durata
+		      \item 3: Scadenza
+		      \item 4: Priorità
+	      \end{itemize}
+	\item \( \%edx \): Numero di valori presenti nello stack (numero di prodotti * 4)
+	\item \( \%edi \): Numero di prodotti
+\end{itemize}
+La funzione fa affidamento ad un'altra funzione presente nel file \textbf{swapOrders.s} (\ref{swapOrders}).
+
+\subsubsection{swapOrders.s}
+\label{swapOrders}
+Questa funzione serve a scambiare due prodotti presenti nello stack e viene utilizzata
+dall'algoritmo di ordinamento. I parametri da passare alla funzione sono:
+\begin{itemize}
+	\item \( \%eax \): Indice del primo valore del primo prodotto
+	\item \( \%ebx \): Indice del primo valore del secondo prodotto
+	\item \( \%ebp \): Indice del primo valore del primo prodotto nello stack
+\end{itemize}
+
+\subsection{File principali}
+\subsubsection{main.s}
+Questo è il file principale del programma, cioè il primo che viene eseguito. All'interno
+di questo file vengono ottenuti i parametri passati dalla riga di comando e successivamente
+si procede con l'apertura del file passato come parametro. Se l'apertura non va a buon fine
+viene stampato un errore e il programma viene terminato chiudendo così il file. Abbiamo
+deciso di aprire il file una sola volta e di tenerlo aperto per tutta la durata del programma,
+chiudendolo soltanto alla fine dell'esecuzione. Questo per evitare di aprire e chiudere il file
+più volte.
+
+\subsubsection{menu.s}
+In questo file è presente il loop che stampa il menu ogni volta che viene completata una
+pianificazione o quando il programma viene eseguito per la prima volta. L'esecuzione del
+menu presuppone un file descriptor nel registro \( \%eax \) in modo da poterlo passare
+poi agli altri file che necessitano di un file descriptor per leggere dal file. Ogni
+volta che viene stampato il menu viene chiesto all'utente di inserire un'opzione, se
+l'opzione è valida viene eseguita la funzione corrispondente, altrimenti viene stampato
+un messaggio di errore e l'input viene chiesto nuovamente. Le opzioni disponibili sono:
+\begin{itemize}
+	\item 1: Pianifica gli ordini con l'algoritmo EDF (Earliest Deadline First)
+	\item 2: Pianifica gli ordini con l'algoritmo HPF (Highest Priority First)
+	\item 3: Esci dal programma
+\end{itemize}
+
+\subsubsection{plan.s}
+In questo file avviene la pianificazione degli ordini. I parametri per questo file sono
+da passare nello stack e sono i seguenti:
+\begin{itemize}
+	\item File descriptor del file aperto
+	\item Algoritmo da eseguire inserito in input dall'utente
+\end{itemize}
+Una volta ottenuti i parametri si procede con la lettura del file, però siccome il file
+rimane sempre aperto per tutta l'esecuzione del programma è necessario posizionare il
+puntatore del file all'inizio del file ogni volta che si vuole fare una nuova pianifica;
+questo viene fatto con la system call \textbf{lseek}:
+\begin{lstlisting}[language={[x86masm]Assembler}]
+  mov $19, %eax  ; syscall lseek (riposiziona il read/write offset)
+  mov fd, %ebx   ; File descriptor
+  mov $0, %ecx   ; Valore di offset
+  mov $0, %edx   ; Posizione di riferimento (0 = inizio del file)
+  int $0x80
+\end{lstlisting}
+La lettura del file viene effettuata leggendo un carattere alla volta inserendolo in un
+buffer. Ogni volta che viene rilevato un carattere '\( \setminus n\)' si aumenta il
+contatore dei prodotti.
+
+\noindent Leggendo il file si ottengono tutti i valori dei prodotti e
+vengono inseriti nello stack. Questo viene effettuato concatenando ogni intero letto
+dal file all'interno di un buffer che verrà poi convertito in un intero quando viene
+letto una virgola o un'andata a capo.
+
+\noindent Una volta che tutti i prodotti sono stati inseriti nello stack si procede con
+l'ordinamento della lista dei prodotti in base all'algoritmo scelto dall'utente, cioè
+inserendo i parametri corretti per la funzione \textbf{bubbleSort.s} come definito
+sopra (\ref{bubbleSort}).
+
+\noindent Quando la lista è ordinata non resta che stampare in sequenza i prodotti
+calcolando i tempi di inizio e la penalità per ogni prodotto. Questo viene fatto
+nel file \textbf{output.s} (\ref{output}).
+
+\noindent Dopo aver completato la pianifica vengono tolti dallo stack tutti i valori inseriti.
+
+\subsubsection{output.s}
+\label{output}
+Questo file serve a stampare i prodotti in sequenza (presupponendo che la lista sia già
+ordinata) e a calcolare i tempi di inizio e la penalità per ogni prodotto. I parametri
+da passare a questa funzione sono:
+\begin{itemize}
+	\item \( \%eax \): Algoritmo scelto dall'utente
+	\item \( \%ebx \): Numero di valori presenti nello stack (numero di prodotti * 4)
+	\item \( \%ecx \): Numero di prodotti
+\end{itemize}
+Questa funzione dopo aver salvato i parametri procede a calcolare il tempo di inizio
+di ogni prodotto scorrendo la lista e sommando la durata dei prodotti precedenti. Ogni
+tempo di inizio viene quindi inserito nello stack.
+
+\noindent Successivamente viene stampato l'output secondo la specifica richiesta e infine
+viene calcolata la penalità totale sommando le penalità di ogni prodotto e stampandola.
+Una volta completata la stampa dell'output vengono tolti tutti i tempi di inizio dallo
+stack.
+
+
 \section{Simulazione ordini!!!}
 \section{Scelte progettuali}
+\subsection{Apertura del file}
+Abbiamo deciso di aprire il file una sola volta e di tenerlo aperto per tutta la durata
+del programma, chiudendolo soltanto alla fine dell'esecuzione. Questa decisione è stata
+presa per risparmiare tempo e risorse, evitando di aprire e chiudere il file più volte.
 
 \end{document}

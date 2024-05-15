@@ -43,7 +43,7 @@ plan:
   # Siccome il file è già stato aperto nel main e questa potrebbe non essere la
   # prima volta che viene letto bisogna "resettare" la posizione di lettura all'inizio
   # del file ogni volta che si vuole leggere da esso
-  mov $19, %eax  # syscall lseek (riposizione il read/write offset)
+  mov $19, %eax  # syscall lseek (riposiziona il read/write offset)
   mov fd, %ebx   # File descriptor
   mov $0, %ecx   # Valore di offset
   mov $0, %edx   # Posizione di riferimento (0 = inizio del file)
@@ -114,15 +114,6 @@ append:
 
 
 planAlgorithm:
-
-  # Riordina lo stack in base ad un offset messo in %ecx e il numero di valori in %edx
-  # %ecx/$esi <- 1 = identificativo
-  # %ecx/$esi <- 2 = durata
-  # %ecx/$esi <- 3 = scadenza
-  # %ecx/$esi <- 4 = priorità
-  # Fallback in %esi nel caso a = b (nel caso di edf sarebbe la priorità se 2 scadenze sono uguali)
-  # Numero di righe in %edi
-
   # Controlla l'algoritmo da usare
   cmpl $1, algorithm
   je edf
@@ -142,6 +133,13 @@ edf:
   movl $4, %esi
 
 sort:
+  # Riordina lo stack in base ad un offset messo in %ecx e il numero di valori in %edx
+  # %ecx/$esi <- 1 = identificativo
+  # %ecx/$esi <- 2 = durata
+  # %ecx/$esi <- 3 = scadenza
+  # %ecx/$esi <- 4 = priorità
+  # Fallback in %esi nel caso a = b (nel caso di edf sarebbe la priorità se 2 scadenze sono uguali)
+  # Numero di righe in %edi
   movl values, %edx
   movl lines, %edi
   call bubbleSort

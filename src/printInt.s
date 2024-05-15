@@ -49,14 +49,5 @@ print:
   
   popl %ecx
   loop print
-
-  # # Stampa il carattere '\n'
-  # movb $10, char
-  #
-  # movl $4, %eax
-  # movl $1, %ebx
-  # leal char, %ecx
-  # movl $1, %edx
-  # int $0x80
   
   ret
