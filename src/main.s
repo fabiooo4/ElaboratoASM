@@ -76,6 +76,11 @@ end:
   mov fd, %ecx # File descriptor
   int $0x80
 
+  # Chiudi il file aperto dal parametro1
+  mov $6, %eax # syscall close
+  mov fd2, %ecx # File descriptor
+  int $0x80
+
   # Termina
   movl $1, %eax
   movl $0, %ebx
