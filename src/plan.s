@@ -76,8 +76,8 @@ readLine:
   cmp $0, %eax
   jl endPlan
 
-  # Altrimenti se c'è EOF eseguo l'algoritmo
-  je planAlgorithm
+  # Altrimenti se c'è EOF controllo se l'input ha valori corretti ed eseguo l'algoritmo
+  je check
 
   # Se c'è una nuova linea incrementa il contatore
   movb buffer, %al
@@ -133,6 +133,57 @@ append:
 
   jmp readLine # Torna alla lettura del file
 
+
+# Controlla se i valori rispettano i vincoli imposti
+check:
+  # Salva %ebp per poterlo cambiare liberamente
+  pushl %ebp
+  movl %esp, %ebp
+
+  movl values, %ecx
+checkLoop:
+  movl (%ebp, %ecx, 4), %eax # ID (1 <= ID <= 127)
+  decl %ecx
+
+  cmpl $1, %eax
+  jl endCheck
+
+  cmpl $127, %eax
+  jg endCheck
+
+  movl (%ebp, %ecx, 4), %eax # Durata (1 <= D <= 10)
+  decl %ecx
+
+  cmpl $1, %eax
+  jl endCheck
+
+  cmpl $10, %eax
+  jg endCheck
+
+  movl (%ebp, %ecx, 4), %eax # Scadenza (1 <= S <= 100)
+  decl %ecx
+
+  cmpl $1, %eax
+  jl endCheck
+
+  cmpl $100, %eax
+  jg endCheck
+
+  movl (%ebp, %ecx, 4), %eax # Priorità (1 <= P <= 5)
+
+  cmpl $1, %eax
+  jl endCheck
+
+  cmpl $5, %eax
+  jg endCheck
+
+  loop checkLoop
+  popl %ebp
+  jmp planAlgorithm
+
+endCheck:
+  popl %ebp
+  jmp errorInput
 
 planAlgorithm:
   # Controlla l'algoritmo da usare
