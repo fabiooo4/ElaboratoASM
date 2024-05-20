@@ -4,11 +4,11 @@
   buffer: .string ""  # Spazio per il buffer di input
   newline: .byte 10   # Valore del simbolo di nuova linea
   values: .int 0      # Numero di valori inseriti nello stack
-  lines: .long 0      # Numero di valori inseriti nello stack
+  lines: .long 0      # Numero di prodotti inseriti nello stack
   algorithm: .long 0  # Tipo di algoritmo da utilizzare: 1 edf, 2 hpf
   concatenate: .string ""  # Stringa per concatenare le cifre lette da file
-
-.section .bss
+  str: .ascii " "
+  inputError: .ascii "  Il file di input non è corretto\n\0"
 
 .section .text
     .global plan
@@ -78,7 +78,7 @@ readLine:
 
   # Altrimenti se c'è EOF eseguo l'algoritmo
   je planAlgorithm
-  
+
   # Se c'è una nuova linea incrementa il contatore
   movb buffer, %al
   cmpb newline, %al
@@ -95,7 +95,15 @@ pushInt:
   je push
 
   cmpb $44, %al
-  jne append
+  je push
+
+  cmpb $48, %al
+  jl errorInput
+
+  cmpb $57, %al
+  jg errorInput
+
+  jmp append
 
 push:
   # Se il carattere è una virgola resetta il contatore
@@ -166,7 +174,6 @@ sort:
   movl fd2, %edx
   call output
 
-
 # Togli dallo stack tutti i valori
   movl values, %ecx
 popInt:
@@ -175,3 +182,35 @@ popInt:
 
 endPlan:
   ret
+
+errorInput:
+  movl $4, %eax
+  movl $2, %ebx
+  leal inputError, %ecx
+  movl $35, %edx
+  int $0x80
+
+  movl values, %ecx
+  testl %ecx, %ecx
+  jz terminate
+
+  movl values, %ecx
+terminatePop:
+  popl %eax
+  loop terminatePop
+
+terminate:
+  # Chiudi il file aperto dal parametro1
+  mov $6, %eax # syscall close
+  mov fd, %ecx # File descriptor
+  int $0x80
+
+  # Chiudi il file aperto dal parametro1
+  mov $6, %eax # syscall close
+  mov fd2, %ecx # File descriptor
+  int $0x80
+
+  # Termina
+  movl $1, %eax
+  movl $0, %ebx
+  int $0x80

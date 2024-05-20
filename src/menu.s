@@ -73,8 +73,13 @@ countChar:
   je menuEnd
 
 errorInput:
+  # Stampa inputError in stderr
+  movl $4, %eax
+  movl $2, %ebx
   leal inputError, %ecx
-  call printStr
+  movl $47, %edx
+  int $0x80
+
   jmp readInput
   
   
