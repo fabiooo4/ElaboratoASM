@@ -74,9 +74,25 @@
 La funzione presente in questo file serve a stampare una qualsiasi stringa che finisca
 con il carattere '\( \setminus 0\)'  presente nel registro \( \%ecx \).
 
+\subsubsection{writeStrFile.s}
+La funzione presente in questo file serve a scrivere una stringa in un file. I parametri
+da passare alla funzione sono:
+\begin{itemize}
+	\item \( \%ebx \): File descriptor del file aperto
+	\item \( \%ecx \): Stringa da scrivere
+\end{itemize}
+
 \subsubsection{printInt.s}
 La funzione presente in questo file serve a convertire un intero presente nel registro
 \( \%eax \)  in una stringa e successivamente stamparla.
+
+\subsubsection{writeIntFile.s}
+La funzione presente in questo file serve a scrivere un intero in un file. I parametri
+da passare alla funzione sono:
+\begin{itemize}
+	\item \( \%esi \): File descriptor del file aperto
+	\item \( \%eax \): Intero da scrivere
+\end{itemize}
 
 \subsubsection{atoi.s}
 La funzione presente in questo file serve a convertire una stringa presente nel registro
@@ -210,7 +226,36 @@ Una volta completata la stampa dell'output vengono tolti tutti i tempi di inizio
 stack.
 
 
-\section{Simulazione ordini!!!}
+\section{Simulazione ordini}
+\subsection{Controllo dei valori}
+All'interno di ogni file di testo viene eseguito (in lettura) un controllo per verificare
+la validità dei valori presenti all'interno. Se essi non rispettano le regole imposte il
+programma resituisce errore.
+
+\noindent In caso contrario il programma continua la sua esecuzione senza intoppi.
+
+\subsection{EDF.txt}
+Il seguente file di testo contiene una lista di ordini che devono essere organizzati in
+modo tale da garantire una penalità uguale a \texttt{0} con l'algoritmo di ordinamento
+\textbf{$EDF$} e una penalità maggiore di \texttt{0} con l'algoritmo di
+ordinamento  \textbf{$HPF$}.
+\subsection{HPF.txt}
+Il seguente file di testo contiene la lista di ordini che devono essere organizzati in
+modo da garantire una penalità uguale a \texttt{0} per l'algoritmo di ordinamento
+\textbf{$HPF$} e maggiore di \texttt{0} per l'algoritmo di
+ordinamento \textbf{$EDF$}
+\subsection{Both.txt}
+Il seguente file di testo contiene la lista di ordini che devono essere organizzati in
+modo da garantire una penalità maggiore di \texttt{0} per entrambi gli algoritmi di
+ordinamento presenti nel programma. In particolare questa lista di ordini prevede delle
+scadenza più corte del singolo tempo di produzione dell'ordine in modo da riportare una
+penalità elevata in entrambi gli algoritmi.
+\subsection{None.txt}
+Il seguente file di testo contiene la lista di ordini che dovranno essere organizzati in
+modo da garantire una penalità uguale a \texttt{0} per entrambi gli algoritmi di
+ordinamento. In questo caso le scadenze sono state impostate ad un tempo elevato in modo
+da favorire il completamento degli ordini per entrambi gli algoritmi di ordinamento.
+
 \section{Scelte progettuali}
 \subsection{Apertura del file}
 Abbiamo deciso di aprire il file una sola volta e di tenerlo aperto per tutta la durata
