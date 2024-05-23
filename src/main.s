@@ -61,19 +61,34 @@ endParams:
   jmp end
 
 errorParam:
+  # Stampa paramError in stderr
+  movl $4, %eax
+  movl $2, %ebx
   leal paramError, %ecx
-  call printStr
+  movl $26, %edx
+  int $0x80
+
   jmp end
 
 errorFile:
+  # Stampa fileError in stderr
+  movl $4, %eax
+  movl $2, %ebx
   leal fileError, %ecx
-  call printStr
+  movl $31, %edx
+  int $0x80
+
   jmp end
 
 end:
   # Chiudi il file aperto dal parametro1
   mov $6, %eax # syscall close
   mov fd, %ecx # File descriptor
+  int $0x80
+
+  # Chiudi il file aperto dal parametro1
+  mov $6, %eax # syscall close
+  mov fd2, %ecx # File descriptor
   int $0x80
 
   # Termina
