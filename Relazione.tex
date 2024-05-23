@@ -239,11 +239,6 @@ Il seguente file di testo contiene una lista di ordini che devono essere organiz
 modo tale da garantire una penalità uguale a \texttt{0} con l'algoritmo di ordinamento
 \textbf{$EDF$} e una penalità maggiore di \texttt{0} con l'algoritmo di
 ordinamento  \textbf{$HPF$}.
-\subsection{HPF.txt}
-Il seguente file di testo contiene la lista di ordini che devono essere organizzati in
-modo da garantire una penalità uguale a \texttt{0} per l'algoritmo di ordinamento
-\textbf{$HPF$} e maggiore di \texttt{0} per l'algoritmo di
-ordinamento \textbf{$EDF$}
 \subsection{Both.txt}
 Il seguente file di testo contiene la lista di ordini che devono essere organizzati in
 modo da garantire una penalità maggiore di \texttt{0} per entrambi gli algoritmi di
@@ -261,5 +256,11 @@ da favorire il completamento degli ordini per entrambi gli algoritmi di ordiname
 Abbiamo deciso di aprire il file una sola volta e di tenerlo aperto per tutta la durata
 del programma, chiudendolo soltanto alla fine dell'esecuzione. Questa decisione è stata
 presa per risparmiare tempo e risorse, evitando di aprire e chiudere il file più volte.
+
+\subsection{Lettura del file}
+Abbiamo deciso di leggere il file ogni volta che viene richiesta una nuova pianificazione
+in modo da permettere all'utente di modificare il file di input senza dover riavviare il
+programma. Siccome il file è aperto solo con permessi di lettura si può modificare il
+file di input tranquillamente senza errori.
 
 \end{document}
