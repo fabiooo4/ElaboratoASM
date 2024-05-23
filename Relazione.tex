@@ -230,26 +230,64 @@ stack.
 \subsection{Controllo dei valori}
 All'interno di ogni file di testo viene eseguito (in lettura) un controllo per verificare
 la validità dei valori presenti all'interno. Se essi non rispettano le regole imposte il
-programma resituisce errore.
+programma resituisce un errore e viene interrotto.
 
 \noindent In caso contrario il programma continua la sua esecuzione senza intoppi.
 
-\subsection{EDF.txt}
+\subsection{Ordini obbligatori}
+I seguenti ordini sono stati fatti per testare la correttezza del programma in situazioni
+in cui la lista di ordini è corretta.
+
+\subsubsection{EDF.txt}
 Il seguente file di testo contiene una lista di ordini che devono essere organizzati in
 modo tale da garantire una penalità uguale a \texttt{0} con l'algoritmo di ordinamento
 \textbf{$EDF$} e una penalità maggiore di \texttt{0} con l'algoritmo di
 ordinamento  \textbf{$HPF$}.
-\subsection{Both.txt}
+
+\subsubsection{Both.txt}
 Il seguente file di testo contiene la lista di ordini che devono essere organizzati in
 modo da garantire una penalità maggiore di \texttt{0} per entrambi gli algoritmi di
 ordinamento presenti nel programma. In particolare questa lista di ordini prevede delle
 scadenza più corte del singolo tempo di produzione dell'ordine in modo da riportare una
 penalità elevata in entrambi gli algoritmi.
-\subsection{None.txt}
+
+\subsubsection{None.txt}
 Il seguente file di testo contiene la lista di ordini che dovranno essere organizzati in
 modo da garantire una penalità uguale a \texttt{0} per entrambi gli algoritmi di
 ordinamento. In questo caso le scadenze sono state impostate ad un tempo elevato in modo
 da favorire il completamento degli ordini per entrambi gli algoritmi di ordinamento.
+
+\subsection{Ordini extra}
+I seguenti ordini sono stati fatti per testare la correttezza del programma in situazioni
+particolari.
+
+\subsubsection{noInput.txt}
+Il seguente file di testo è vuoto e non contiene alcun ordine. Il programma restituisce
+un errore e termina l'esecuzione.
+
+\subsubsection{oneLine.txt}
+Il seguente file di testo contiene un solo ordine. Il programma viene eseguito come
+previsto e restituisce un output corretto.
+
+\subsubsection{wrongInput.txt}
+Il seguente file di testo contiene una stringa al posto dei valori degli ordini. Il
+programma restituisce un errore e termina l'esecuzione.
+
+\subsubsection{wrongId.txt}
+Il seguente file di testo contiene un identificativo fuori dall'intervallo consentito.
+Il programma restituisce un errore e termina l'esecuzione.
+
+\subsubsection{wrongDuration.txt}
+Il seguente file di testo contiene una durata fuori dall'intervallo consentito. Il
+programma restituisce un errore e termina l'esecuzione.
+
+\subsubsection{wrongDeadline.txt}
+Il seguente file di testo contiene una scadenza fuori dall'intervallo consentito. Il
+programma restituisce un errore e termina l'esecuzione.
+
+\subsubsection{wrongPriority.txt}
+Il seguente file di testo contiene una priorità fuori dall'intervallo consentito. Il
+programma restituisce un errore e termina l'esecuzione.
 
 \section{Scelte progettuali}
 \subsection{Apertura del file}
